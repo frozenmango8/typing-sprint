@@ -46,6 +46,17 @@ export function openSession(
   };
 }
 
+export function caret(session: Session): number {
+  let n = 0;
+  for (const event of session.events) if (event.ok) n += 1;
+  return n;
+}
+
+export function showingError(session: Session): boolean {
+  const last = session.events[session.events.length - 1];
+  return !!last && !last.ok;
+}
+
 export function elapsedMs(session: Session, now: number): number {
   if (session.startedAt == null) return 0;
   const end = session.finishedAt ?? now;
@@ -69,17 +80,31 @@ export function typeChar(session: Session, ch: string, now: number): void {
   if (ch.length !== 1) return;
   if (session.finishedAt != null) return;
   if (expire(session, now)) return;
-  if (session.events.length >= session.text.length) return;
+  const index = caret(session);
+  if (index >= session.text.length) return;
   if (session.startedAt == null) session.startedAt = now;
-  const previous = session.events.length ? session.events[session.events.length - 1].at : now;
-  const expected = session.text[session.events.length];
+  const expected = session.text[index];
+  const ok = ch === expected;
+  // A correct press is timed from the previous correct one, so the misses in
+  // between count as time spent on that key.
+  let since = session.startedAt;
+  if (ok) {
+    for (let i = session.events.length - 1; i >= 0; i--) {
+      if (session.events[i].ok) {
+        since = session.events[i].at;
+        break;
+      }
+    }
+  } else if (session.events.length) {
+    since = session.events[session.events.length - 1].at;
+  }
   session.events.push({
     expected,
-    ok: ch === expected,
-    delayMs: Math.max(0, now - previous),
+    ok,
+    delayMs: Math.max(0, now - since),
     at: now,
   });
-  if (session.events.length >= session.text.length) session.finishedAt = now;
+  if (ok && caret(session) >= session.text.length) session.finishedAt = now;
 }
 
 export function backspace(session: Session): void {

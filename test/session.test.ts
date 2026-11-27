@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { backspace, createSession, elapsedMs, openSession, tick, typeChar } from "../src/session";
+import { backspace, caret, createSession, elapsedMs, openSession, showingError, tick, typeChar } from "../src/session";
 
 describe("session", () => {
   it("starts the clock on the first character", () => {
@@ -9,11 +9,26 @@ describe("session", () => {
     expect(session.events).toEqual([{ expected: "a", ok: true, delayMs: 0, at: 1000 }]);
   });
 
-  it("marks a miss and keeps going", () => {
+  it("stays put on a miss", () => {
+    const session = openSession("words", 30, "ab");
+    typeChar(session, "a", 1000);
+    typeChar(session, "x", 1300);
+    typeChar(session, "x", 1500);
+    expect(caret(session)).toBe(1);
+    expect(showingError(session)).toBe(true);
+    typeChar(session, "b", 1800);
+    expect(session.finishedAt).toBe(1800);
+    const hit = session.events.find((event) => event.expected === "b" && event.ok);
+    expect(hit?.delayMs).toBe(800);
+  });
+
+  it("clears a miss without eating the previous character", () => {
     const session = openSession("words", 30, "ab");
     typeChar(session, "a", 1000);
     typeChar(session, "x", 1200);
-    expect(session.events[1]).toMatchObject({ expected: "b", ok: false, delayMs: 200 });
+    backspace(session);
+    expect(caret(session)).toBe(1);
+    expect(showingError(session)).toBe(false);
   });
 
   it("undoes the last stroke", () => {
