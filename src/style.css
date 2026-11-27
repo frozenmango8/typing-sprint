@@ -1,0 +1,14 @@
+:root {
+  color-scheme: light;
+  --paper: #e4dfd4;
+  --ink: #24231f;
+  --muted: #6e695f;
+  --faint: #a8a294;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
