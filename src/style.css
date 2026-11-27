@@ -2,13 +2,303 @@
   color-scheme: light;
   --paper: #e4dfd4;
   --ink: #24231f;
-  --muted: #6e695f;
-  --faint: #a8a294;
+  --muted: #6f6a60;
+  --faint: #a39e93;
+  --line: #cfc8ba;
+  --bad: #8c3e34;
+  --used: #d5ddd2;
+  --slow: #234056;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+body {
+  min-height: 100vh;
+}
+
+::selection {
+  background: #d5cfc2;
+}
+
+main {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 2.6rem 1.4rem 4.5rem;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 2.6rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.settings {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.group {
+  display: flex;
+  gap: 0.05rem;
+}
+
+button {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  padding: 0.15rem 0.32rem;
+  cursor: pointer;
+}
+
+button:hover {
+  color: var(--ink);
+}
+
+button[aria-pressed="true"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 1px;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.stats {
+  display: flex;
+  gap: 1.35rem;
+  margin: 0 0 1.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats b {
+  display: inline-block;
+  min-width: 3ch;
+  color: var(--ink);
+  font-weight: 500;
+  text-align: right;
+}
+
+#time {
+  min-width: 4ch;
+}
+
+.passage {
+  position: relative;
+  height: 6.8em; /* four lines at 1.7 */
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  user-select: none;
+}
+
+.passage span {
+  border-left: 2px solid transparent;
+}
+
+.passage.quote {
+  height: auto;
+  overflow: visible;
+}
+
+.passage .pending {
+  color: var(--faint);
+}
+
+.passage .bad {
+  color: var(--bad);
+  background: #e4a79b;
+}
+
+.passage .current {
+  border-left-color: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .passage .current {
+    animation: caret 1.05s steps(1) infinite;
+  }
+}
+
+@keyframes caret {
+  50% {
+    border-left-color: transparent;
+  }
+}
+
+.credit {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.score {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.score b {
+  color: var(--ink);
+  font-size: 2.6rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.accuracy {
+  margin: 0.35rem 0 0;
+  font-size: 1.2rem;
+}
+
+.note {
+  margin: 0.7rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.findings {
+  margin-top: 1.35rem;
+}
+
+.keyline {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.keyline .label {
+  width: 4.5rem;
+  color: var(--muted);
+}
+
+.board {
+  width: max-content;
+  max-width: 100%;
+  margin-top: 1.6rem;
+  overflow-x: auto;
+  user-select: none;
+}
+
+.row {
+  display: flex;
+  gap: 0.28rem;
+  margin-top: 0.28rem;
+}
+
+.row-1 {
+  padding-left: 0.7rem;
+}
+
+.row-2 {
+  padding-left: 1.4rem;
+}
+
+.row-3 {
+  padding-left: 2.1rem;
+}
+
+.row-space {
+  justify-content: center;
+}
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.85rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.key.space {
+  width: 8.2rem;
+}
+
+.key.used {
+  border-color: transparent;
+  background: var(--used);
+  color: var(--ink);
+}
+
+.key.slow {
+  box-shadow: inset 0 -2px 0 var(--slow);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--line);
+}
+
+.swatch.miss {
+  border-color: transparent;
+  background: var(--bad);
+}
+
+.swatch.slow {
+  margin-left: 0.55rem;
+  border-bottom: 2px solid var(--slow);
+}
+
+.chart {
+  margin-top: 1.8rem;
+}
+
+.chart svg {
+  display: block;
+  width: min(100%, 24rem);
+  height: auto;
+  color: var(--ink);
+}
+
+.caption {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.hint {
+  margin: 2.8rem 0 0;
+  color: var(--faint);
+  font-size: 0.75rem;
 }
